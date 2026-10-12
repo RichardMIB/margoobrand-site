@@ -24,6 +24,81 @@
   --ease-brand: cubic-bezier(0.2, 0.8, 0.2, 1);
 
   --container-page: 1240px;
+
+  /* Fotos do hero flutuando (y ±14px). Usa `translate`, separado do transform 3D. */
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 9s ease-in-out -2s infinite;
+  --animate-float-mid: float 8s ease-in-out -4s infinite;
+  --animate-orbit: orbit 26s linear infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    50% {
+      translate: 0 -14px;
+    }
+  }
+
+  @keyframes orbit {
+    from {
+      transform: translateZ(60px) rotateX(74deg) rotateZ(0deg);
+    }
+    to {
+      transform: translateZ(60px) rotateX(74deg) rotateZ(360deg);
+    }
+  }
+}
+
+/* ===== Hero: peças da cena 3D ===== */
+@layer components {
+  .hero-layer {
+    position: absolute;
+    box-shadow: 0 30px 60px rgb(26 23 20 / 0.22);
+  }
+
+  .hero-sun {
+    position: absolute;
+    left: 14%;
+    top: 6%;
+    width: 72%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 35% 35%,
+      #f4e2cf,
+      #e8c9b2 45%,
+      rgb(232 201 178 / 0) 70%
+    );
+  }
+
+  .hero-orbit {
+    position: absolute;
+    left: -6%;
+    right: -6%;
+    top: 28%;
+    height: 44%;
+    border: 1px solid rgb(110 31 43 / 0.35);
+    border-radius: 50%;
+    transform: translateZ(60px) rotateX(74deg);
+    pointer-events: none;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: 50%;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--color-wine);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      animation: var(--animate-orbit);
+    }
+  }
 }
 
 /* Container padrão: máx 1240px, gutter 24px (16px no celular). */

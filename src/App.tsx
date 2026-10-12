@@ -1,51 +1,36 @@
-import { site } from './config/site'
-import { whatsappGeneral } from './lib/whatsapp'
+import { MotionConfig } from 'motion/react'
+import { Header } from './components/Header'
+import { Hero } from './components/hero/Hero'
+import { ScrollProgress } from './components/ScrollProgress'
 
-/**
- * Tela provisória da issue #1: só confere tokens, fontes e o link do
- * WhatsApp. É substituída pelas seções reais a partir da issue #2.
- */
-const swatches = ['ink', 'paper', 'sand', 'wine', 'muted', 'stone', 'linen'] as const
-
-const swatchClass: Record<(typeof swatches)[number], string> = {
-  ink: 'bg-ink',
-  paper: 'bg-paper',
-  sand: 'bg-sand',
-  wine: 'bg-wine',
-  muted: 'bg-muted',
-  stone: 'bg-stone',
-  linen: 'bg-linen',
-}
+/* Seções ainda não implementadas: só existem para as âncoras e a rolagem funcionarem. */
+const upcoming = [
+  { id: 'colecao', title: 'Disponíveis agora', issue: 4 },
+  { id: 'elas-usam', title: 'Elas usam', issue: 5 },
+  { id: 'feedbacks', title: 'O que dizem', issue: 6 },
+  { id: 'loja', title: 'Venha nos visitar', issue: 6 },
+] as const
 
 export default function App() {
   return (
-    <main className="container-page py-16">
-      <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone">
-        Nova coleção · {site.season}
-      </p>
-      <h1 className="mt-4 font-display text-[clamp(42px,6vw,88px)] leading-none tracking-[-0.02em]">
-        Para mulheres que se expressam através do que{' '}
-        <em className="text-wine">vestem.</em>
-      </h1>
-
-      <ul className="mt-12 flex flex-wrap gap-4" aria-label="Paleta de cores">
-        {swatches.map((name) => (
-          <li key={name} className="text-sm text-muted">
-            <span
-              className={`block h-16 w-24 border border-sand ${swatchClass[name]}`}
-              aria-hidden="true"
-            />
-            {name}
-          </li>
+    // reducedMotion="user": animações de entrada viram instantâneas para quem pediu menos movimento
+    <MotionConfig reducedMotion="user">
+      <ScrollProgress />
+      <Header />
+      <main>
+        <Hero />
+        {upcoming.map((s) => (
+          <section
+            key={s.id}
+            id={s.id}
+            className="container-page flex min-h-[80vh] items-center border-t border-sand"
+          >
+            <h2 className="font-display text-[clamp(40px,4.5vw,64px)] font-normal leading-none text-stone">
+              {s.title} <small className="font-sans text-base">— issue #{s.issue}</small>
+            </h2>
+          </section>
         ))}
-      </ul>
-
-      <a
-        href={whatsappGeneral()}
-        className="mt-12 inline-flex min-h-11 items-center border border-ink px-5 text-xs font-medium uppercase tracking-[0.16em] transition-colors duration-300 ease-brand hover:bg-ink hover:text-paper"
-      >
-        Chamar a Margoo
-      </a>
-    </main>
+      </main>
+    </MotionConfig>
   )
 }
