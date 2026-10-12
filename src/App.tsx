@@ -15,22 +15,26 @@ export default function App() {
   return (
     // reducedMotion="user": animações de entrada viram instantâneas para quem pediu menos movimento
     <MotionConfig reducedMotion="user">
-      <ScrollProgress />
-      <Header />
-      <main>
-        <Hero />
-        {upcoming.map((s) => (
-          <section
-            key={s.id}
-            id={s.id}
-            className="container-page flex min-h-[80vh] items-center border-t border-sand"
-          >
-            <h2 className="font-display text-[clamp(40px,4.5vw,64px)] font-normal leading-none text-stone">
-              {s.title} <small className="font-sans text-base">— issue #{s.issue}</small>
-            </h2>
-          </section>
-        ))}
-      </main>
+      {/* overflow-x: clip corta a cena 3D que passa da borda sem criar barra de rolagem
+          (diferente de hidden, não vira "caixa de rolagem" e não quebra o sticky da galeria) */}
+      <div className="overflow-x-clip">
+        <ScrollProgress />
+        <Header />
+        <main>
+          <Hero />
+          {upcoming.map((s) => (
+            <section
+              key={s.id}
+              id={s.id}
+              className="container-page flex min-h-[80vh] items-center border-t border-sand"
+            >
+              <h2 className="font-display text-[clamp(40px,4.5vw,64px)] font-normal leading-none text-stone">
+                {s.title} <small className="font-sans text-base">— issue #{s.issue}</small>
+              </h2>
+            </section>
+          ))}
+        </main>
+      </div>
     </MotionConfig>
   )
 }

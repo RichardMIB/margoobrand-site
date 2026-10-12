@@ -15,23 +15,27 @@ export function Header() {
         Atendimento online e presencial · Av. Beira Mar, Mucuripe
       </p>
 
-      <div className="container-page flex flex-wrap items-center justify-between gap-4 py-[22px] max-sm:gap-2.5 max-sm:py-3.5">
+      {/*
+        Celular: grade de 2 linhas → [logo | botão] em cima, nav rolável embaixo.
+        A partir de 640px: uma linha só (logo · nav · botão).
+      */}
+      <div className="container-page grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5 py-3.5 sm:flex sm:flex-wrap sm:justify-between sm:gap-4 sm:py-[22px]">
         <a
           href="#inicio"
           aria-label="MargooBrand, voltar ao início"
-          className="flex min-h-11 items-center gap-3 no-underline"
+          className="flex min-h-11 min-w-0 items-center gap-2 no-underline sm:gap-3"
         >
-          <span aria-hidden="true" className="font-display text-[34px] font-semibold leading-none tracking-[-0.02em]">
+          <span aria-hidden="true" className="font-display text-[28px] font-semibold leading-none tracking-[-0.02em] sm:text-[34px]">
             MB
           </span>
-          <span aria-hidden="true" className="text-xs font-medium tracking-[0.32em]">
+          <span aria-hidden="true" className="truncate text-[10px] font-medium tracking-[0.2em] sm:text-xs sm:tracking-[0.32em]">
             MARGOOBRAND
           </span>
         </a>
 
         <nav
           aria-label="Seções"
-          className="flex flex-wrap gap-7 max-sm:order-3 max-sm:w-full max-sm:flex-nowrap max-sm:gap-5 max-sm:overflow-x-auto max-sm:pb-1"
+          className="col-span-2 row-start-2 flex gap-5 overflow-x-auto pb-1 sm:flex-wrap sm:gap-7 sm:overflow-visible sm:pb-0"
         >
           {navItems.map((item) => (
             <a

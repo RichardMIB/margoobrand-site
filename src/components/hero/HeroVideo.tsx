@@ -10,13 +10,17 @@ type HeroVideoProps = {
 
 /**
  * Vídeo mudo em loop com botão de pausar/tocar.
+ * - "Pausado pelo usuário" vive num ref, separado do estado real do vídeo
+ *   (`playing`, que só espelha os eventos play/pause).
+ * - Tenta tocar em todo momento em que faz sentido: no mount, quando o vídeo
+ *   fica pronto (loadeddata/canplay) e quando volta a ficar visível.
  * - `muted` é forçado por ref: o React nem sempre aplica o atributo, e sem
  *   ele o navegador bloqueia o autoplay.
- * - Pausa sozinho fora da tela (economiza bateria) e respeita a pausa do usuário.
  */
 export function HeroVideo({ startPaused, frameClassName }: HeroVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const pausedByUser = useRef(startPaused)
+  const visible = useRef(true)
   const [playing, setPlaying] = useState(false)
 
   useEffect(() => {
@@ -24,26 +28,35 @@ export function HeroVideo({ startPaused, frameClassName }: HeroVideoProps) {
     if (!el) return
 
     el.muted = true
+    el.defaultMuted = true
     pausedByUser.current = startPaused
     if (startPaused) el.pause()
 
     const tryPlay = () => {
-      if (pausedByUser.current) return
+      if (pausedByUser.current || !visible.current || !el.paused) return
       el.play().catch(() => {
-        // Autoplay bloqueado (modo economia etc.): fica no poster, botão mostra "Tocar".
+        // Autoplay bloqueado (ex.: modo economia): fica no poster e o botão mostra "Tocar".
       })
     }
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) tryPlay()
-        else el.pause()
-      },
-      { threshold: 0.15 },
-    )
+    // Fora da tela só pausa; não mexe em `pausedByUser`.
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry) return
+      visible.current = entry.isIntersecting
+      if (entry.isIntersecting) tryPlay()
+      else if (!el.paused) el.pause()
+    })
     observer.observe(el)
 
-    return () => observer.disconnect()
+    el.addEventListener('loadeddata', tryPlay)
+    el.addEventListener('canplay', tryPlay)
+    tryPlay()
+
+    return () => {
+      observer.disconnect()
+      el.removeEventListener('loadeddata', tryPlay)
+      el.removeEventListener('canplay', tryPlay)
+    }
   }, [startPaused])
 
   const toggle = () => {

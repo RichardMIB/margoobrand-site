@@ -52,15 +52,16 @@ export function HeroScene({ tilt, prefs }: HeroSceneProps) {
   const glareY = useTransform(tilt.pointerY, (v) => `${v * 100}%`)
 
   return (
-    <div className="relative h-[clamp(480px,56vw,640px)] min-w-0 flex-[1_1_360px] perspective-[1400px] max-sm:order-first max-sm:h-[420px]">
+    <div className="relative h-[clamp(480px,56vw,640px)] min-w-0 flex-[1_1_360px] isolate perspective-[1400px] max-sm:order-first max-sm:h-[420px]">
       <motion.div
         aria-hidden="true"
-        className="hero-sun"
+        // z-0: o sol fica sempre atrás da pilha (z-[1]), em qualquer layout
+        className="hero-sun z-0"
         style={pointerFx ? { x: sunX, y: sunY } : undefined}
       />
 
       <motion.div
-        className="absolute inset-0 transform-3d"
+        className="absolute inset-0 z-[1] transform-3d"
         style={pointerFx ? { rotateX: tilt.rotateX, rotateY: tilt.rotateY } : undefined}
       >
         <div aria-hidden="true" className="hero-orbit" />
@@ -74,15 +75,18 @@ export function HeroScene({ tilt, prefs }: HeroSceneProps) {
             startPaused={reduceMotion}
             frameClassName="relative size-full overflow-hidden bg-[#CDBBA3] motion-safe:animate-float"
           />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-[3] overflow-hidden mix-blend-soft-light"
-          >
-            <motion.div
-              className="absolute -left-1/2 -top-1/2 size-full bg-[radial-gradient(circle,rgb(255_255_255/0.55),transparent_50%)]"
-              style={{ x: glareX, y: glareY }}
-            />
-          </div>
+          {/* Brilho só existe com mouse: em touch ficaria parado tingindo o vídeo. */}
+          {pointerFx && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-[3] overflow-hidden mix-blend-soft-light"
+            >
+              <motion.div
+                className="absolute -left-1/2 -top-1/2 size-full bg-[radial-gradient(circle,rgb(255_255_255/0.55),transparent_50%)]"
+                style={{ x: glareX, y: glareY }}
+              />
+            </div>
+          )}
         </motion.div>
 
         {/* Camada de trás: body tricot */}

@@ -121,7 +121,6 @@
 
   body {
     @apply bg-paper font-sans font-light text-ink antialiased;
-    overflow-x: clip;
   }
 
   :focus-visible {
