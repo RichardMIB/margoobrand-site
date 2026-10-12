@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
-type Variant = 'solid' | 'outline' | 'link'
+type Variant = 'solid3d' | 'outline' | 'link'
 type Size = 'sm' | 'md'
 
 type ButtonLinkProps = ComponentPropsWithoutRef<'a'> & {
@@ -11,12 +11,13 @@ type ButtonLinkProps = ComponentPropsWithoutRef<'a'> & {
 }
 
 /*
- * As classes b3d / bline / ulink são os ganchos dos efeitos de hover
- * (issue #3). Aqui fica só a aparência base.
+ * O componente cuida da API e do HTML; os efeitos (pseudo-elementos,
+ * hover, active, reduzir movimento) ficam nas classes .b3d / .bline / .ulink
+ * em src/styles/index.css.
  */
 const variantClass: Record<Variant, string> = {
-  solid: 'b3d bg-ink text-paper shadow-[0_4px_0_var(--color-wine),0_10px_20px_rgb(26_23_20/0.15)]',
-  outline: 'bline border border-ink text-ink',
+  solid3d: 'b3d bg-ink text-paper',
+  outline: 'bline border border-ink',
   link: 'ulink border-b border-ink px-2 py-4 text-[13px] text-ink',
 }
 
@@ -25,11 +26,13 @@ const sizeClass: Record<Size, string> = {
   md: 'px-[30px] py-4 text-[13px]',
 }
 
+/** Todo CTA do site é navegação (âncora, WhatsApp, Maps), por isso é <a>, não <button>. */
 export function ButtonLink({
-  variant = 'solid',
+  variant = 'solid3d',
   size = 'md',
   external = false,
   className = '',
+  children,
   ...rest
 }: ButtonLinkProps) {
   const sizing = variant === 'link' ? '' : sizeClass[size]
@@ -38,6 +41,9 @@ export function ButtonLink({
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       {...rest}
       className={`inline-flex min-h-11 items-center font-medium uppercase tracking-[0.16em] no-underline ${variantClass[variant]} ${sizing} ${className}`}
-    />
+    >
+      {variant === 'solid3d' && <span aria-hidden="true" className="b3d-shine" />}
+      {children}
+    </a>
   )
 }

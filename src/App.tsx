@@ -1,7 +1,10 @@
 import { MotionConfig } from 'motion/react'
+import { CursorRing } from './components/CursorRing'
 import { Header } from './components/Header'
 import { Hero } from './components/hero/Hero'
+import { LivingBackground } from './components/LivingBackground'
 import { ScrollProgress } from './components/ScrollProgress'
+import { WhatsAppFab } from './components/WhatsAppFab'
 
 /* Seções ainda não implementadas: só existem para as âncoras e a rolagem funcionarem. */
 const upcoming = [
@@ -15,10 +18,14 @@ export default function App() {
   return (
     // reducedMotion="user": animações de entrada viram instantâneas para quem pediu menos movimento
     <MotionConfig reducedMotion="user">
+      {/* Camadas fixas: fundo atrás (z-0), conteúdo no meio (z-1), enfeites por cima. */}
+      <LivingBackground />
+      <ScrollProgress />
+      <CursorRing />
+
       {/* overflow-x: clip corta a cena 3D que passa da borda sem criar barra de rolagem
           (diferente de hidden, não vira "caixa de rolagem" e não quebra o sticky da galeria) */}
-      <div className="overflow-x-clip">
-        <ScrollProgress />
+      <div className="relative z-[1] overflow-x-clip">
         <Header />
         <main>
           <Hero />
@@ -35,6 +42,8 @@ export default function App() {
           ))}
         </main>
       </div>
+
+      <WhatsAppFab />
     </MotionConfig>
   )
 }
